@@ -25,8 +25,24 @@ window.onload = function() {
             }
         }
     }));
+
+    var serialized = decodeURIComponent(
+	window.location.hash.slice(window.location.hash.indexOf("=") + 1));
+    if (serialized) {
+        highlighter.deserialize(serialized);
+    }
 };
 
-window.onmouseup = function() {
+window.onmouseup = function(e) {
     highlighter.highlightSelection("highlight");
+    // TODO(goto): there is probably an API in rangy for this.
+    if (window.getSelection) {
+	window.getSelection().removeAllRanges();
+    } else if (document.selection) {
+	document.selection.empty();
+    }
+
+    window.location.hash = "highlights=" + encodeURIComponent(
+      highlighter.serialize());
 }
+
