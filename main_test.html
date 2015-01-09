@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <script src="third_party/closure-library/closure/goog/base.js"></script>
+    <script src="bin/kiwi.js"></script>
+    <script>
+      goog.require("goog.testing.jsunit");
+      goog.require("goog.dom");
+    </script>
+  </head>
+  <body>
+
+  <span id="foo">hello world</span>
+
+  <script>
+    rangy.init();
+
+    var highlighter = rangy.createHighlighter();
+
+    highlighter.addClassApplier(rangy.createCssClassApplier("highlight", {
+        ignoreWhiteSpace: true,
+        tagNames: ["span", "a"],
+        elementProperties: {
+          href: "#",
+          foo: "bar",
+          onclick: function() {
+            var highlight = highlighter.getHighlightForElement(this);
+            alert("Opening comment:" + highlight.id);
+            return false;
+          },
+          style: {
+            "background-color": "yellow"
+          }
+        }
+    }));
+
+    function setUp() {
+    }
+
+    function tearDown() {
+      // TODO(goto): there is probably an API in rangy for this.
+      if (window.getSelection) {
+   	window.getSelection().removeAllRanges();
+      } else if (document.selection) {  
+	document.selection.empty();
+      }
+    }
+
+    function testHighlight() {
+      var el = document.getElementById("foo");
+      var range = rangy.createRange();
+      range.selectNodeContents(el);
+      var sel = rangy.getSelection();
+      sel.setSingleRange(range);
+
+      highlighter.highlightSelection("highlight", {
+        selection: sel
+      });
+
+      assertEquals("<span class='highlight' style='background-color: yellow;'>hello world</span>", el.innerHTML.replace(/"/g, "'"));
+    }
+  </script>
+
+  </body>
+</html>

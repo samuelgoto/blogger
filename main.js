@@ -10,6 +10,7 @@ function Storage() {
 Storage.prototype.store = function(serialized) {
     window.location.hash = "highlights=" + encodeURIComponent(
       serialized);
+    console.log(serialized);
 }
 
 Storage.prototype.load = function(callback) {
@@ -44,11 +45,12 @@ window.onload = function() {
           highlighter.deserialize(serialized);
       }
     });
-
 };
 
 window.onmouseup = function(e) {
-    highlighter.highlightSelection("highlight");
+    highlighter.highlightSelection("highlight", {
+      exclusive: false
+    });
     // TODO(goto): there is probably an API in rangy for this.
     if (window.getSelection) {
 	window.getSelection().removeAllRanges();
