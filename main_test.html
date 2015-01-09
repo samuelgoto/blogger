@@ -10,6 +10,7 @@
     <script src="third_party/rangy/src/core/wrappedselection.js"></script>
     <script src="third_party/rangy/src/modules/rangy-classapplier.js"></script>
     <script src="third_party/rangy/src/modules/rangy-highlighter.js"></script>
+    <script src="third_party/rangy/src/modules/rangy-textrange.js"></script>
     <script>
       goog.require("goog.testing.jsunit");
       goog.require("goog.dom");
@@ -30,6 +31,7 @@
     var highlighter;
 
     function setUp() {
+      // highlighter = rangy.createHighlighter(document, "TextRange");
       highlighter = rangy.createHighlighter();
 
       highlighter.addClassApplier(rangy.createCssClassApplier("highlight", {
@@ -166,6 +168,13 @@
 
       // Asserts that the highlight was removed.
       assertEquals("hello world", norm(el.innerHTML));
+
+      // Mutates the DOM.
+      // TODO(goto): if you un-comment these lines, this test will fail.
+      // To fix this, we'll have to change how the hightlights are calculated
+      // as well as serialized, to mitigate dom mutations. Non trivial.
+      // el.innerHTML = "foo bar hello world";
+      // assertEquals("foo bar hello world", norm(el.innerHTML));
 
       // De-serializes from the stored serialization.
       highlighter.deserialize(serialized);
