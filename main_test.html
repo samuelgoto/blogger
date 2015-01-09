@@ -5,6 +5,7 @@
     <script>
       goog.require("goog.testing.jsunit");
       goog.require("goog.dom");
+      goog.require("goog.dom.Range");
     </script>
   </head>
   <body>
@@ -13,33 +14,36 @@
   <div id="testHighlight_startAndEndOffsets">hello world</div>
   <div id="testHighlight_crossNodes"><span>hello</span> world</div>
   <div id="testHighlight_image">hello <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="> world</div>
+  <div id="testClosure_range">hello world</div>
 
   <script>
     rangy.init();
-
-    var highlighter = rangy.createHighlighter();
-
-    highlighter.addClassApplier(rangy.createCssClassApplier("highlight", {
-        ignoreWhiteSpace: true,
-        tagNames: ["span", "a"],
-        elementProperties: {
-          href: "#",
-          foo: "bar",
-          onclick: function() {
-            var highlight = highlighter.getHighlightForElement(this);
-            alert("Opening comment:" + highlight.id);
-            return false;
-          },
-          style: {
-            "background-color": "yellow"
-          }
-        }
-    }));
+    var highlighter;
 
     function setUp() {
+      highlighter = rangy.createHighlighter();
+
+      highlighter.addClassApplier(rangy.createCssClassApplier("highlight", {
+          ignoreWhiteSpace: true,
+          tagNames: ["span", "a"],
+          elementProperties: {
+            href: "#",
+            foo: "bar",
+            onclick: function() {
+              var highlight = highlighter.getHighlightForElement(this);
+              alert("Opening comment:" + highlight.id);
+              return false;
+            },
+            style: {
+              "background-color": "yellow"
+            }
+          }
+      }));
     }
 
     function tearDown() {
+      // Cleans up.
+      highlighter.removeAllHighlights();
       // TODO(goto): there is probably an API in rangy for this.
       if (window.getSelection) {
    	window.getSelection().removeAllRanges();
@@ -60,6 +64,11 @@
       });
 
       assertEquals("<span class='highlight' style='background-color: yellow;'>hello world</span>", norm(el.innerHTML));
+
+      assertEquals("type:textContent|4$15$2$highlight$$hello world", 
+        highlighter.serialize({
+          serializeHighlightText: true
+        }));
     }
 
     function testHighlight_startAndEndOffsets() {
@@ -74,6 +83,11 @@
       });
 
       assertEquals("he<span class='highlight' style='background-color: yellow;'>ll</span>o world", norm(el.innerHTML));
+
+      assertEquals("type:textContent|20$22$4$highlight$$ll", 
+        highlighter.serialize({
+          serializeHighlightText: true
+        }));
     }
 
     function testHighlight_crossNodes() {
@@ -88,6 +102,11 @@
       });
 
       assertEquals("<span>he<span class='highlight' style='background-color: yellow;'>llo</span></span><span class='highlight' style='background-color: yellow;'> wor</span>ld", norm(el.innerHTML));
+
+      assertEquals("type:textContent|34$41$1$highlight$$llo wor", 
+        highlighter.serialize({
+          serializeHighlightText: true
+        }));
     }
 
     function testHighlight_image() {
@@ -102,6 +121,28 @@
       });
 
       assertEquals("<span class='highlight' style='background-color: yellow;'>hello </span><img src='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='><span class='highlight' style='background-color: yellow;'> world</span>", norm(el.innerHTML));
+
+      assertEquals("type:textContent|46$58$3$highlight$$hello  world", 
+        highlighter.serialize({
+          serializeHighlightText: true
+        }));
+    }
+
+    function testSerialization() {
+    }
+
+    function testClosure_range() {
+      var el = document.getElementById("testClosure_range").childNodes[0];
+      var range = goog.dom.Range.createFromNodes(el, 0, el, 4);
+      assertEquals("hell", range.getText());
+      range.surroundWithNodes(
+          goog.dom.createDom("span"), goog.dom.createDom("span"));
+      var serialization = range.saveUsingDom();
+      console.log(serialization);
+
+      // range.selectNodeContents(el);
+      // var sel = rangy.getSelection();
+      // sel.setSingleRange(range);
     }
 
     function norm(html) {
