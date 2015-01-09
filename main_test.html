@@ -23,6 +23,7 @@
   <div id="testHighlight_crossNodes"><span>hello</span> world</div>
   <div id="testHighlight_image">hello <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="> world</div>
   <div id="testClosure_range">hello world</div>
+  <div id="testSerialization_domMutation">hello world</div>
 
   <script>
     rangy.init();
@@ -136,7 +137,41 @@
         }));
     }
 
-    function testSerialization() {
+    function testSerialization_domMutation() {
+      // Creates a selection on he[ll]o world.
+      var el = document.getElementById("testSerialization_domMutation");
+      var range = rangy.createRange();
+      range.setStartAndEnd(el.childNodes[0], 2, 4);
+      var sel = rangy.getSelection();
+      sel.setSingleRange(range);
+
+      // Highlights it.
+      highlighter.highlightSelection("highlight", {
+        selection: sel
+      });
+
+      // [ll]  gets wrapped with a span.
+      assertEquals("he<span class='highlight' style='background-color: yellow;'>ll</span>o world", norm(el.innerHTML));
+
+      // Serializes the highlight and store it locally.
+      var serialized = highlighter.serialize({
+        serializeHighlightText: true
+      });
+
+      assertEquals("type:textContent|77$79$5$highlight$$ll", serialized);
+
+      // Removes the highlights.
+      highlighter.removeAllHighlights();
+      window.getSelection().removeAllRanges();
+
+      // Asserts that the highlight was removed.
+      assertEquals("hello world", norm(el.innerHTML));
+
+      // De-serializes from the stored serialization.
+      highlighter.deserialize(serialized);
+
+      // Asserts that the right parts were highlighted.
+      assertEquals("he<span class='highlight' style='background-color: yellow;'>ll</span>o world", norm(el.innerHTML));
     }
 
     function testClosure_range() {
