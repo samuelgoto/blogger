@@ -9,7 +9,10 @@
   </head>
   <body>
 
-  <span id="foo">hello world</span>
+  <div id="testHighlight_entireNode">hello world</div>
+  <div id="testHighlight_startAndEndOffsets">hello world</div>
+  <div id="testHighlight_crossNodes"><span>hello</span> world</div>
+  <div id="testHighlight_image">hello <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="> world</div>
 
   <script>
     rangy.init();
@@ -45,8 +48,8 @@
       }
     }
 
-    function testHighlight() {
-      var el = document.getElementById("foo");
+    function testHighlight_entireNode() {
+      var el = document.getElementById("testHighlight_entireNode");
       var range = rangy.createRange();
       range.selectNodeContents(el);
       var sel = rangy.getSelection();
@@ -56,7 +59,53 @@
         selection: sel
       });
 
-      assertEquals("<span class='highlight' style='background-color: yellow;'>hello world</span>", el.innerHTML.replace(/"/g, "'"));
+      assertEquals("<span class='highlight' style='background-color: yellow;'>hello world</span>", norm(el.innerHTML));
+    }
+
+    function testHighlight_startAndEndOffsets() {
+      var el = document.getElementById("testHighlight_startAndEndOffsets");
+      var range = rangy.createRange();
+      range.setStartAndEnd(el.childNodes[0], 2, 4);
+      var sel = rangy.getSelection();
+      sel.setSingleRange(range);
+
+      highlighter.highlightSelection("highlight", {
+        selection: sel
+      });
+
+      assertEquals("he<span class='highlight' style='background-color: yellow;'>ll</span>o world", norm(el.innerHTML));
+    }
+
+    function testHighlight_crossNodes() {
+      var el = document.getElementById("testHighlight_crossNodes");
+      var range = rangy.createRange();
+      range.setStartAndEnd(el.childNodes[0].childNodes[0], 2, el.childNodes[1], 4);
+      var sel = rangy.getSelection();
+      sel.setSingleRange(range);
+
+      highlighter.highlightSelection("highlight", {
+        selection: sel
+      });
+
+      assertEquals("<span>he<span class='highlight' style='background-color: yellow;'>llo</span></span><span class='highlight' style='background-color: yellow;'> wor</span>ld", norm(el.innerHTML));
+    }
+
+    function testHighlight_image() {
+      var el = document.getElementById("testHighlight_image");
+      var range = rangy.createRange();
+      range.selectNodeContents(el);
+      var sel = rangy.getSelection();
+      sel.setSingleRange(range);
+
+      highlighter.highlightSelection("highlight", {
+        selection: sel
+      });
+
+      assertEquals("<span class='highlight' style='background-color: yellow;'>hello </span><img src='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='><span class='highlight' style='background-color: yellow;'> world</span>", norm(el.innerHTML));
+    }
+
+    function norm(html) {
+      return html.replace(/"/g, "'");
     }
   </script>
 
