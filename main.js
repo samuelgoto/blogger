@@ -34,9 +34,10 @@ Storage.prototype.commit_ = function() {
         JSON.stringify(this.cache_));
 }
 
-Storage.prototype.post = function(path, payload, callback) {
+Storage.prototype.post = function(path, payload, opt_callback) {
     this.cache_[path] = payload;
     this.commit_();
+    var callback = opt_callback || function() {};
     callback(200, payload);
 }
 
@@ -64,10 +65,11 @@ window.onload = function() {
 		// var thread = highlighter.threads[highlight.id];
 		storage.get("/threads/" + highlight.id, function(s, thread) {
 		    var className = "";
+		    var id = highlight.id;
 		    if (s == 404) {
 			// This is a new thread.
 			thread = {
-			    id: highlight.id,
+			    // id: highlight.id,
 			    date: (new Date()).toString(),
 			    author: {
 				username: "Sam Goto"
@@ -79,7 +81,7 @@ window.onload = function() {
 		    
 		    var offsetTop = goog.style.getPageOffsetTop(el);
 		    // console.log(offsetTop);
-		    var container = createThread(thread);
+		    var container = createThread(id, thread);
 		    container.style.top = offsetTop + "px";
 		    container.className = container.className + " " + className;
 		    document.body.appendChild(container);
@@ -108,13 +110,7 @@ window.onload = function() {
 function onCreateThread(input) {
     var caption = document.forms["create-form"]["caption"].value;
 
-    var p = input.parentNode;
-    while (p !== null) {
-	if (goog.dom.classes.has(p, "thread")) {
-	    break;
-	}
-        p = p.parentNode;
-    }
+    var p = walkUp(input, "thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -137,7 +133,7 @@ function onCreateThread(input) {
 }
 
 function storeThread(id, thread, callback) {
-    console.log(thread);
+    // console.log(thread);
     storage.post("/threads/" + id, thread, function() {
 	var highlights = highlighter.serialize();
 	storage.post("/highlights", highlights, function() {
@@ -146,15 +142,20 @@ function storeThread(id, thread, callback) {
     });
 }
 
-function onCancelThread(input) {
-    var p = input.parentNode;
+function walkUp(el, clazz) {
+    var p = el.parentNode;
     
     while (p !== null) {
-	if (goog.dom.classes.has(p, "thread")) {
-	    break;
+	if (goog.dom.classes.has(p, clazz)) {
+	    // break;
+	    return p;
 	}
         p = p.parentNode;
     }
+}
+
+function onCancelThread(input) {
+    var p = walkUp(input, "thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -172,6 +173,31 @@ function onCancelThread(input) {
 }
 
 function onCreateComment(input) {
+    var caption = input["comment"].value;
+    var p = walkUp(input, "thread");
+    var id = p.getAttribute("data-thread-id");
+    storage.get("/threads/" + id, function(status, payload) {
+	payload.comments = payload.comments || [];
+	var comment = {
+	    date: (new Date()).toString(),
+	    caption: caption,
+	    author: {
+		username: "Sam Goto"
+	    }
+	};
+	payload.comments.push(comment);
+	storage.post("/threads/" + id, payload, function(payload) {
+	    // Appends the comment element.
+	    var container = p.querySelector(".comments");
+	    var el = goog.dom.createElement("div");
+	    el.className = "comment";
+	    el.innerHTML = createComment(comment);
+	    container.appendChild(el);
+
+	    // Updates the UI, closes the comment box.
+	    input["comment"].value = "";
+	});
+    });
     return false;
 }
 
@@ -180,7 +206,23 @@ function onCancelComment(input) {
     return false;
 }
 
-function createThread(thread) {
+function createComment(comment) {
+    var html = "";
+    html += "<div class='header'>";
+    html += "  <span class='username'>";
+    html +=    comment.author.username;
+    html += " </span>";
+    html += "  <span class='date'>";
+    html +=    comment.date;
+    html += "  </span>";
+    html += "</div>";
+    html += "<div class='content'>";
+    html +=   comment.caption;
+    html += "</div>";
+    return html;
+}
+
+function createThread(id, thread) {
     var html = "";
     html += "  <div class='caption'>";
     html += "    <div class='header'>";
@@ -200,19 +242,9 @@ function createThread(thread) {
     html += "  <div class='comments'>";
     for (var c in thread.comments) {
 	var comment = thread.comments[c];
-	html += "    <div class='comment'>";
-   	html += "      <div class='header'>";
-   	html += "        <span class='username'>";
-	html +=          comment.author.username;
-	html += "        </span>";
-	html += "        <span class='date'>";
-	html +=          comment.date;
-	html += "        </span>";
- 	html += "      </div>";
-   	html += "      <div class='content'>";
-	html +=          comment.caption;
- 	html += "      </div>";
-	html += "    </div>"
+	html += "<div class='comment'>";
+	html +=   createComment(comment);
+	html += "</div>"
     }
     html += "  </div>"
     html += "  <div class='create-form'>";
@@ -224,7 +256,7 @@ function createThread(thread) {
     html += "    </form>"
     html += "  </div>"
     html += "  <div class='comment-form'>";
-    html += "    <form name='comment-form' onsubmit='return onCreateComment();'>";
+    html += "    <form name='comment-form' onsubmit='return onCreateComment(this);'>";
     html += "      <textarea required name='comment' placeholder='Reply'>";
     html += "</textarea>";
     html += "      <input type='submit' value='create'>";
@@ -235,7 +267,7 @@ function createThread(thread) {
     var el = goog.dom.createElement("div");
     el.className = "thread";
     el.innerHTML = html;
-    el.setAttribute("data-thread-id", thread.id);
+    el.setAttribute("data-thread-id", id);
     return el;
 }
 
