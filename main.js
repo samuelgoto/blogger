@@ -4,19 +4,47 @@
  * It assumes that all of the rangy files have been declared before this file.
  */
 
+goog.require("goog.dom");
+
 function Storage() {
 }
 
 Storage.prototype.store = function(serialized) {
+    var payload = {
+      threads: [{
+        id: 1,
+        caption: "Hello World!",
+        date: "8:00am 10/10/14",
+        author: {
+          username: "Sam Goto"
+        },
+        comments: [{
+          date: "9:25am Today",
+          author:  {
+            username: "John Doe"
+          },
+          caption: "This is a comment from a user"
+        }, {
+          date: "10:40am Today",
+          author: {
+            username: "Bob Marley"
+          },
+          caption: "This is another comment from another user"
+        }]
+      }],
+      highlights: serialized
+    };
+
     window.location.hash = "highlights=" + encodeURIComponent(
-      serialized);
-    console.log(serialized);
+        JSON.stringify(payload));
 }
 
 Storage.prototype.load = function(callback) {
    var serialized = decodeURIComponent(
 	window.location.hash.slice(window.location.hash.indexOf("=") + 1));
-    callback(serialized);
+   if (serialized) {
+     callback(JSON.parse(serialized));
+   }
 }
 
 var storage = new Storage();
@@ -32,22 +60,70 @@ window.onload = function() {
         tagNames: ["span", "a"],
          elementProperties: {
             href: "#",
-            onclick: function() {
+            onclick: function(e) {
                 var highlight = highlighter.getHighlightForElement(this);
                 alert("Opening comment:" + highlight.id);
+                // alert(e);
                 return false;
             }
         }
     }));
 
     storage.load(function(serialized) {
-      if (serialized) {
-          highlighter.deserialize(serialized);
-      }
+        highlighter.deserialize(serialized.highlights);
+
+        for (var t in serialized.threads) {
+	    var html = "";
+	    html += "<div class='thread'>";
+	    html += "  <div class='caption'>";
+	    html += "  <div class='header'>";
+	    html += "    <span class='username'>";
+	    html +=      serialized.threads[t].author.username;
+	    html += "    </span>";
+	    html += "    <span class='date'>";
+	    html +=      serialized.threads[t].date;
+	    html += "    </span>";
+	    html += "  </div>";
+	    html += serialized.threads[t].caption;
+	    html += "  </div>";
+	    html += "  <div class='comments'>";
+            for (var c in serialized.threads[t].comments) {
+		var comment = serialized.threads[t].comments[c];
+		html += "    <div class='comment'>";
+   		html += "      <div class='header'>";
+   		html += "        <span class='username'>";
+		html +=          comment.author.username;
+		html += "        </span>";
+		html += "        <span class='date'>";
+		html +=          comment.date;
+		html += "        </span>";
+ 		html += "      </div>";
+		html +=      comment.caption;
+		html += "    </div>"
+            }
+	    html += "  </div>"
+	    html += "  <div class='form'>";
+	    html += "    <form method='post'>";
+	    html += "      <textarea name='comment' placeholder='Reply'>";
+            html += "</textarea>";
+	    html += "      <input type='submit' value='create'>";
+	    html += "    </form>"
+	    html += "  </div>"
+	    html += "</div>"
+
+	    var el = goog.dom.createElement("div");
+	    el.className = "kiwi";
+	    el.innerHTML = html;
+	    document.body.appendChild(el);
+        }
     });
 };
 
 window.onmouseup = function(e) {
+    if (window.getSelection().type == "Caret") {
+      return;
+    }
+    // console.log(window.getSelection().type == );
     highlighter.highlightSelection("highlight", {
       exclusive: false
     });
