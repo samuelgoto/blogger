@@ -112,10 +112,25 @@ window.onload = function() {
     });
 };
 
-function onCreateThread(form) {
-    // alert("creating a thread");
+function onCreateThread(input) {
     var caption = document.forms["create-form"]["caption"].value;
-    console.log(caption);
+    // console.log(caption);
+
+    var p = input.parentNode;
+    while (p !== null) {
+	if (goog.dom.classes.has(p, "thread")) {
+	    break;
+	}
+        p = p.parentNode;
+    }
+
+    // console.log(p);
+    goog.dom.classes.remove(p, "thread-new");
+
+    var el = p.querySelector(".caption .content");
+    // console.log(el);
+    el.innerHTML = caption;
+
     return false;
 }
 
@@ -154,17 +169,19 @@ function onCreateComment(form) {
 function createThread(thread) {
     var html = "";
     html += "  <div class='caption'>";
-    html += "  <div class='header'>";
-    html += "    <span class='username'>";
-    html +=      thread.author.username;
-    html += "    </span>";
-    html += "    <span class='date'>";
-    html +=      thread.date;
-    html += "    </span>";
-    html += "  </div>";
+    html += "    <div class='header'>";
+    html += "      <span class='username'>";
+    html +=        thread.author.username;
+    html += "      </span>";
+    html += "      <span class='date'>";
+    html +=        thread.date;
+    html += "      </span>";
+    html += "    </div>";
+    html += "    <div class='content'>";
     if (thread.caption) {
 	html += thread.caption;
     }
+    html += "    </div>";
     html += "  </div>";
     html += "  <div class='comments'>";
     for (var c in thread.comments) {
@@ -178,12 +195,14 @@ function createThread(thread) {
 	html +=          comment.date;
 	html += "        </span>";
  	html += "      </div>";
-	html +=      comment.caption;
+   	html += "      <div class='content'>";
+	html +=          comment.caption;
+ 	html += "      </div>";
 	html += "    </div>"
     }
     html += "  </div>"
     html += "  <div class='create-form'>";
-    html += "    <form name='create-form' onsubmit='return onCreateThread();'>";
+    html += "    <form name='create-form' onsubmit='return onCreateThread(this);'>";
     html += "      <textarea required name='caption' autofocus placeholder='Add a comment'>";
     html += "</textarea>";
     html += "      <input type='submit' value='create'>";
@@ -218,7 +237,5 @@ window.onmouseup = function(e) {
     //} else if (document.selection) {
     //document.selection.empty();
     //}
-
-    // storage.store(highlighter.serialize());
 }
 
