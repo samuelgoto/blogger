@@ -9,45 +9,35 @@ goog.require("goog.dom.classes");
 goog.require("goog.style");
 
 function Storage() {
-}
-
-Storage.prototype.store = function(serialized) {
-    var payload = {
-      threads: {
-        "1" : {
-            caption: "Hello World!",
-            date: "8:00am 10/10/14",
-            author: {
-		username: "Sam Goto"
-            },
-            comments: [{
-		date: "9:25am Today",
-		author:  {
-		    username: "John Doe"
-		},
-		caption: "This is a comment from a user"
-            }, {
-		date: "10:40am Today",
-		author: {
-		    username: "Bob Marley"
-		},
-		caption: "This is another comment from another user"
-            }]
-	}
-      },
-      highlights: serialized
-    };
-
-    window.location.hash = "highlights=" + encodeURIComponent(
-        JSON.stringify(payload));
+    this.cache_ = {};
 }
 
 Storage.prototype.load = function(callback) {
-   var serialized = decodeURIComponent(
+    var blob = decodeURIComponent(
 	window.location.hash.slice(window.location.hash.indexOf("=") + 1));
-   if (serialized) {
-     callback(JSON.parse(serialized));
-   }
+    if (blob) {
+	this.cache_ = JSON.parse(blob);
+    }
+    callback();
+}
+
+Storage.prototype.get = function(path, callback) {
+    if (this.cache_[path]) {
+	callback(200, this.cache_[path]);
+	return;
+    }
+    callback(404);
+}
+
+Storage.prototype.commit_ = function() {
+    window.location.hash = "highlights=" + encodeURIComponent(
+        JSON.stringify(this.cache_));
+}
+
+Storage.prototype.post = function(path, payload, callback) {
+    this.cache_[path] = payload;
+    this.commit_();
+    callback(200, payload);
 }
 
 var storage = new Storage();
@@ -71,28 +61,29 @@ window.onload = function() {
 	    // to finish and only add the nodes once the setup is done.
 	    setTimeout(function() {
 		var highlight = highlighter.getHighlightForElement(el);
-		var thread = highlighter.threads[highlight.id];
-
-		var className = "";
-		if (!thread) {
-		    // This is a new thread.
-		    thread = {
-			id: highlight.id,
-			date: new Date(),
-			author: {
-			    username: "Sam Goto"
-			}
-		    };
-		    className += "thread-new";
-		}
-		// console.log(thread);
-
-		var offsetTop = goog.style.getPageOffsetTop(el);
-		// console.log(offsetTop);
-		var container = createThread(thread);
-		container.style.top = offsetTop + "px";
-		container.className = container.className + " " + className;
-		document.body.appendChild(container);
+		// var thread = highlighter.threads[highlight.id];
+		storage.get("/threads/" + highlight.id, function(s, thread) {
+		    var className = "";
+		    if (s == 404) {
+			// This is a new thread.
+			thread = {
+			    id: highlight.id,
+			    date: (new Date()).toString(),
+			    author: {
+				username: "Sam Goto"
+			    }
+			};
+			className += "thread-new";
+		    }
+		    // console.log(thread);
+		    
+		    var offsetTop = goog.style.getPageOffsetTop(el);
+		    // console.log(offsetTop);
+		    var container = createThread(thread);
+		    container.style.top = offsetTop + "px";
+		    container.className = container.className + " " + className;
+		    document.body.appendChild(container);
+		});
 	    }, 0);
         },
         elementProperties: {
@@ -106,15 +97,16 @@ window.onload = function() {
     }));
 
     storage.load(function(serialized) {
-        // Add the threads to the highligher global object.
-	highlighter.threads = serialized.threads;
-        highlighter.deserialize(serialized.highlights);
+	storage.get("/highlights", function(status, highlights) {
+	    if (status == 200) {
+		highlighter.deserialize(highlights);
+	    }
+	});
     });
 };
 
 function onCreateThread(input) {
     var caption = document.forms["create-form"]["caption"].value;
-    // console.log(caption);
 
     var p = input.parentNode;
     while (p !== null) {
@@ -124,15 +116,36 @@ function onCreateThread(input) {
         p = p.parentNode;
     }
 
-    // console.log(p);
-    goog.dom.classes.remove(p, "thread-new");
+    var id = p.getAttribute("data-thread-id");
 
-    var el = p.querySelector(".caption .content");
-    // console.log(el);
-    el.innerHTML = caption;
+    var thread = {
+	caption: caption,
+	date: (new Date()).toString(),
+	author: {
+	    username: "Sam Goto"
+	}
+    };
+
+    storeThread(id, thread, function() {
+	goog.dom.classes.remove(p, "thread-new");
+
+	var el = p.querySelector(".caption .content");
+	el.innerHTML = caption;
+    });
 
     return false;
 }
+
+function storeThread(id, thread, callback) {
+    console.log(thread);
+    storage.post("/threads/" + id, thread, function() {
+	var highlights = highlighter.serialize();
+	storage.post("/highlights", highlights, function() {
+	    callback();
+        });
+    });
+}
+
 
 function onCancelThread(input) {
     var p = input.parentNode;
@@ -158,8 +171,6 @@ function onCancelThread(input) {
 
     return false;
 }
-
-
 
 function onCreateComment(form) {
     console.log("creating a comment");
@@ -231,11 +242,5 @@ window.onmouseup = function(e) {
     highlighter.highlightSelection("highlight", {
       exclusive: false
     });
-    // TODO(goto): there is probably an API in rangy for this.
-    //if (window.getSelection) {
-    //window.getSelection().removeAllRanges();
-    //} else if (document.selection) {
-    //document.selection.empty();
-    //}
 }
 
