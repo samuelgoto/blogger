@@ -88,9 +88,10 @@ window.onload = function() {
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
 
-		    container.style.top = offsetTop + "px";
+		    // container.style.top = offsetTop + "px";
 		    container.className = container.className + " " + className;
-		    document.body.appendChild(container);
+		    // document.body.appendChild(container);
+		    document.body.querySelector(".kiwi").appendChild(container);
 		});
 	    }, 0);
         },
@@ -98,11 +99,38 @@ window.onload = function() {
             href: "#",
             onclick: function(e) {
                 var highlight = highlighter.getHighlightForElement(this);
-                alert("Opening comment:" + highlight.id);
+                // alert("Opening comment:" + highlight.id);
+		var thread = document.body.querySelector(
+		    ".thread[data-thread-id = '" + highlight.id + "']");
+		// console.log(thread);
+
+		var offsetTop = goog.style.getPageOffsetTop(this);
+
+		// var threadTop = goog.style.getPageOffsetTop(thread);
+		var threadTop = goog.style.getClientPosition(thread).y;
+
+		var pane = document.body.querySelector(".kiwi");
+
+		//if ((offsetTop - threadTop) <= 0) {
+		var marginTop = Number(pane.style.marginTop.replace(/[^-\d\.]/g, '') || 0);
+		// console.log(marginTop);
+		// console.log(offsetTop);
+		// console.log(threadTop);
+		marginTop = marginTop + offsetTop - threadTop;
+		// console.log(marginTop);
+		pane.style.marginTop = marginTop + "px";
+
+		// console.log(pane.style.marginTop);
+		// console.log(offsetTop - threadTop);
+		
                 return false;
             },
         }
     }));
+
+    var container = goog.dom.createElement("div");
+    container.className = "kiwi";
+    document.body.appendChild(container);
 
     storage.load(function(serialized) {
 	storage.get("/highlights", function(status, highlights) {
@@ -114,7 +142,7 @@ window.onload = function() {
 };
 
 function onCreateThread(input) {
-    var caption = document.forms["create-form"]["caption"].value;
+    var caption = input["caption"].value;
 
     var p = walkUp(input, "thread");
 

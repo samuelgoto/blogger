@@ -1,12 +1,16 @@
+.kiwi {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 .highlight {
     background-color: yellow;
+    cursor: pointer;
 }
 
 .thread {
     z-index: 100;
-    position: absolute;
-    right: 0;
-    top: 0;
     width: 280px;
 }
 
