@@ -2,13 +2,12 @@
     background-color: yellow;
 }
 
-.kiwi {
+.thread {
     z-index: 100;
     position: absolute;
     right: 0;
     top: 0;
-    height: 100%;
-    width: 300px;
+    width: 280px;
 }
 
 .thread {
@@ -25,26 +24,34 @@
     white-space: normal;
 }
 
-.thread .form {
+.thread-new .comment-form, .create-form {
+  display: none;
+}
+
+.thread-new .create-form, .comment-form {
+  display: block;;
+}
+
+.thread .comment-form, .thread .create-form {
   padding: 10px;
 }
 
-.thread .form textarea {
+.thread textarea {
   width: 100%;
   font-family: "Times New Roman", Times, serif;  
   font-size: 16px;
   height: 40px;
 }
 
-.thread .form textarea:focus {
+.thread .comment-form textarea:focus, .thread .create-form textarea {
   height: 150px;
 }
 
-.thread .form textarea + input {
+.thread .comment-form textarea + input {
   display: none;
 }
 
-.thread .form textarea:focus + input {
+.thread .comment-form textarea:focus + input {
   display: block;
 }
 
@@ -53,8 +60,13 @@
   border-bottom: 1px solid #e5e5e5;
 }
 
-.thread .form, .thread .comment {
+.thread .comment-form, .thread .create-form, .thread .comment {
   background-color: #f5f5f5;
+}
+
+.thread textarea:invalid + input {
+  background-color: #4d90fe;
+  opacity: 0.5;
 }
 
 input[type="submit"] {
@@ -63,6 +75,13 @@ input[type="submit"] {
     background-color: rgb(53, 122, 232);
     border: 1px solid rgb(48, 121, 237);
     font-size: 11px;
+}
+
+input[type="submit"][value="cancel"] {
+  background-color: #f5f5f5;
+  border: 1px solid;
+  border-color: rgba(0, 0, 0, 0.0980392);
+  color: rgb(51, 51, 51);
 }
 
 input[type="submit"]:hover {
