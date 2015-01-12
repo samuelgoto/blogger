@@ -62,14 +62,21 @@ window.onload = function() {
 	    // to finish and only add the nodes once the setup is done.
 	    setTimeout(function() {
 		var highlight = highlighter.getHighlightForElement(el);
-		// var thread = highlighter.threads[highlight.id];
+
+		var thread = document.body.querySelector(
+		    ".thread[data-thread-id = '" + highlight.id + "']");
+
+		// If a thread was already created, skip.
+		if (thread) {
+		    return;
+		}
+
 		storage.get("/threads/" + highlight.id, function(s, thread) {
 		    var className = "";
 		    var id = highlight.id;
 		    if (s == 404) {
 			// This is a new thread.
 			thread = {
-			    // id: highlight.id,
 			    date: (new Date()).toString(),
 			    author: {
 				username: "Sam Goto"
@@ -77,10 +84,8 @@ window.onload = function() {
 			};
 			className += "thread-new";
 		    }
-		    // console.log(thread);
-		    
+
 		    var offsetTop = goog.style.getPageOffsetTop(el);
-		    // console.log(offsetTop);
 		    var html = createThread(id, thread);
 
 		    var container = goog.dom.createElement("div");
@@ -88,9 +93,7 @@ window.onload = function() {
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
 
-		    // container.style.top = offsetTop + "px";
 		    container.className = container.className + " " + className;
-		    // document.body.appendChild(container);
 		    document.body.querySelector(".kiwi").appendChild(container);
 		});
 	    }, 0);
@@ -99,30 +102,22 @@ window.onload = function() {
             href: "#",
             onclick: function(e) {
                 var highlight = highlighter.getHighlightForElement(this);
-                // alert("Opening comment:" + highlight.id);
 		var thread = document.body.querySelector(
 		    ".thread[data-thread-id = '" + highlight.id + "']");
-		// console.log(thread);
 
 		var offsetTop = goog.style.getPageOffsetTop(this);
 
-		// var threadTop = goog.style.getPageOffsetTop(thread);
 		var threadTop = goog.style.getClientPosition(thread).y;
 
 		var pane = document.body.querySelector(".kiwi");
 
-		//if ((offsetTop - threadTop) <= 0) {
 		var marginTop = Number(pane.style.marginTop.replace(/[^-\d\.]/g, '') || 0);
 		// console.log(marginTop);
 		// console.log(offsetTop);
 		// console.log(threadTop);
 		marginTop = marginTop + offsetTop - threadTop;
-		// console.log(marginTop);
 		pane.style.marginTop = marginTop + "px";
 
-		// console.log(pane.style.marginTop);
-		// console.log(offsetTop - threadTop);
-		
                 return false;
             },
         }
@@ -309,4 +304,3 @@ window.onmouseup = function(e) {
       exclusive: false
     });
 }
-
