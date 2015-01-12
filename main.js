@@ -81,7 +81,13 @@ window.onload = function() {
 		    
 		    var offsetTop = goog.style.getPageOffsetTop(el);
 		    // console.log(offsetTop);
-		    var container = createThread(id, thread);
+		    var html = createThread(id, thread);
+
+		    var container = goog.dom.createElement("div");
+		    container.className = "thread";
+		    container.innerHTML = html;
+		    container.setAttribute("data-thread-id", id);
+
 		    container.style.top = offsetTop + "px";
 		    container.className = container.className + " " + className;
 		    document.body.appendChild(container);
@@ -264,11 +270,7 @@ function createThread(id, thread) {
     html += "    </form>"
     html += "  </div>"
     
-    var el = goog.dom.createElement("div");
-    el.className = "thread";
-    el.innerHTML = html;
-    el.setAttribute("data-thread-id", id);
-    return el;
+    return html;
 }
 
 window.onmouseup = function(e) {
