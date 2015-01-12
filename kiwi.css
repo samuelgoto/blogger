@@ -43,16 +43,18 @@
   height: 40px;
 }
 
-.thread .comment-form textarea:focus, .thread .create-form textarea {
+.thread .comment-form textarea:focus, 
+.thread .comment-form textarea:valid,
+.thread .create-form textarea {
   height: 150px;
 }
 
-.thread .comment-form textarea + input {
+.thread .comment-form textarea:invalid ~ input {
   display: none;
 }
 
-.thread .comment-form textarea:focus + input {
-  display: block;
+.thread .comment-form textarea:focus ~ input {
+  display: inline;
 }
 
 .thread .comment, .thread .caption {

@@ -146,7 +146,6 @@ function storeThread(id, thread, callback) {
     });
 }
 
-
 function onCancelThread(input) {
     var p = input.parentNode;
     
@@ -172,8 +171,12 @@ function onCancelThread(input) {
     return false;
 }
 
-function onCreateComment(form) {
-    console.log("creating a comment");
+function onCreateComment(input) {
+    return false;
+}
+
+function onCancelComment(input) {
+    input.form["comment"].value = "";
     return false;
 }
 
@@ -222,9 +225,10 @@ function createThread(thread) {
     html += "  </div>"
     html += "  <div class='comment-form'>";
     html += "    <form name='comment-form' onsubmit='return onCreateComment();'>";
-    html += "      <textarea required name='comment' autofocus placeholder='Reply'>";
+    html += "      <textarea required name='comment' placeholder='Reply'>";
     html += "</textarea>";
     html += "      <input type='submit' value='create'>";
+    html += "      <input type='submit' value='cancel' onclick='return onCancelComment(this);'>";
     html += "    </form>"
     html += "  </div>"
     
