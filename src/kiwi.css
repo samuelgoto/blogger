@@ -2,7 +2,6 @@
     position: absolute;
     right: 0;
     top: 0;
-    overflow-y: hidden;
 }
 
 .kiwi-highlight {
@@ -20,10 +19,16 @@
     font-family: Arial,sans-serif,sans;
     font-size: 14px;
     white-space: normal;
+    position: absolute;
+    right: 0px;
+    text-decoration: none;
+    outline:none;
+    color: black;
+    cursor: pointer;
 }
 
 .kiwi-thread-new .kiwi-comment-form, .kiwi-create-form {
-  display: none;
+    display: none;
 }
 
 .kiwi-thread-new .kiwi-create-form, .kiwi-comment-form {
@@ -39,12 +44,14 @@
   font-family: "Times New Roman", Times, serif;  
   font-size: 16px;
   height: 40px;
+  overflow: hidden;
 }
 
 .kiwi-thread .kiwi-comment-form textarea:focus, 
 .kiwi-thread .kiwi-comment-form textarea:valid,
 .kiwi-thread .kiwi-create-form textarea {
   height: 150px;
+  overflow: auto;
 }
 
 .kiwi-thread .kiwi-comment-form textarea:invalid ~ input {
@@ -112,3 +119,25 @@
     font-size: 11px;
     display: block;
 }
+
+.kiwi-thread .kiwi-thread-body {
+    display: none;
+}
+
+.kiwi-thread {
+    -webkit-transition: right 0.5s ease;
+    -moz-transition: rigth 0.5s ease;  
+    -o-transition: right 0.5s ease;  
+    -ms-transition: right 0.5s ease;  
+    transition: right 0.5s ease;
+}
+
+.kiwi-thread[data-kiwi-focus=true] {
+    z-index: 101;
+    right: 50px;
+}
+
+.kiwi-thread[data-kiwi-focus=true] .kiwi-thread-body {
+    display: block;
+}
+

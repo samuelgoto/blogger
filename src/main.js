@@ -91,22 +91,29 @@ window.onload = function() {
 		    var html = createThread(id, thread);
 
 		    var container = goog.dom.createElement("div");
+		    container.onclick = function(e) {
+			this.setAttribute("data-kiwi-focus", "true");
+		    };
 		    container.className = "kiwi-thread";
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
 		    container.className = container.className + " " + className;
 		    document.body.querySelector(".kiwi").appendChild(container);
 
-		    if (s == 404) {
-			scrollThread(el);
-		    }
+		    scrollThread(el);
 		});
 	    }, 0);
         },
         elementProperties: {
             href: "#",
             onclick: function(e) {
-		scrollThread(this);
+		var highlight = highlighter.getHighlightForElement(this);
+
+		var thread = document.body.querySelector(
+		    ".kiwi-thread[data-thread-id = '" + highlight.id + "']");
+
+		thread.setAttribute("data-kiwi-focus", "true");
+
                 return false;
             }
         }
@@ -133,17 +140,7 @@ function scrollThread(el) {
 
     var offsetTop = goog.style.getPageOffsetTop(el);
 
-    // var threadTop = goog.style.getClientPosition(thread).y;
-    var threadTop = goog.style.getPageOffsetTop(thread);
-
-    var pane = document.body.querySelector(".kiwi");
-
-    var marginTop = Number(pane.style.marginTop.replace(/[^-\d\.]/g, '') || 0);
-    console.log(marginTop);
-    console.log(offsetTop);
-    console.log(threadTop);
-    marginTop = marginTop + offsetTop - threadTop;
-    pane.style.marginTop = marginTop + "px";
+    thread.style.top = offsetTop + "px";
 }
 
 function onCreateThread(input) {
@@ -278,35 +275,43 @@ function createThread(id, thread) {
     }
     html += "    </div>";
     html += "  </div>";
-    html += "  <div class='kiwi-comments'>";
+    html += "  <div class='kiwi-thread-body'>";
+    html += "    <div class='kiwi-comments'>";
     for (var c in thread.comments) {
 	var comment = thread.comments[c];
-	html += "<div class='kiwi-comment'>";
-	html +=   createComment(comment);
-	html += "</div>"
+	html += "  <div class='kiwi-comment'>";
+	html +=     createComment(comment);
+	html += "  </div>"
     }
-    html += "  </div>"
-    html += "  <div class='kiwi-create-form'>";
-    html += "    <form name='create-form' onsubmit='return onCreateThread(this);'>";
-    html += "      <textarea required name='caption' autofocus placeholder='Add a comment'>";
+    html += "    </div>"
+    html += "    <div class='kiwi-create-form'>";
+    html += "      <form name='create-form' onsubmit='return onCreateThread(this);'>";
+    html += "        <textarea required name='caption' autofocus placeholder='Add a comment'>";
     html += "</textarea>";
-    html += "      <input type='submit' value='create'>";
-    html += "      <input type='submit' value='cancel' onclick='return onCancelThread(this);'>";
-    html += "    </form>"
-    html += "  </div>"
-    html += "  <div class='kiwi-comment-form'>";
-    html += "    <form name='kiwi-comment-form' onsubmit='return onCreateComment(this);'>";
-    html += "      <textarea required name='comment' placeholder='Reply'>";
+    html += "        <input type='submit' value='create'>";
+    html += "        <input type='submit' value='cancel' onclick='return onCancelThread(this);'>";
+    html += "      </form>"
+    html += "    </div>"
+    html += "    <div class='kiwi-comment-form'>";
+    html += "      <form name='kiwi-comment-form' onsubmit='return onCreateComment(this);'>";
+    html += "        <textarea required name='comment' placeholder='Reply'>";
     html += "</textarea>";
-    html += "      <input type='submit' value='create'>";
-    html += "      <input type='submit' value='cancel' onclick='return onCancelComment(this);'>";
-    html += "    </form>"
+    html += "        <input type='submit' value='create'>";
+    html += "        <input type='submit' value='cancel' onclick='return onCancelComment(this);'>";
+    html += "      </form>"
+    html += "    </div>"
     html += "  </div>"
     
     return html;
 }
 
 window.onmouseup = function(e) {
+    var thread = document.querySelector(".kiwi-thread[data-kiwi-focus=true]");
+    if (thread) {
+	// Cleaning any focus that may exist.
+	thread.setAttribute("data-kiwi-focus", false);
+    }
+
     if (window.getSelection().type == "Caret") {
       return;
     }
