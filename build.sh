@@ -6,7 +6,7 @@
   --root=third_party/closure-library/                                \
   --root=src/                                                        \
   -f --manage_closure_dependencies=true                              \
-  -f --formatting=PRETTY_PRINT                                       \
+  -f --compilation_level=SIMPLE                                      \
   -f --closure_entry_point=kiwi                                      \
   -f --js=third_party/rangy/lib/rangy-core.js                        \
   -f --js=third_party/rangy/lib/rangy-classapplier.js                \
