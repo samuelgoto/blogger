@@ -4,78 +4,71 @@
     top: 0;
 }
 
-.highlight {
+.kiwi-highlight {
     background-color: yellow;
     cursor: pointer;
 }
 
-.thread {
+.kiwi-thread {
     z-index: 100;
     width: 280px;
-}
-
-.thread {
     margin: 10px;
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
     background-color: white;
-    z-index: 101;
     opacity: 1.0;
-}
-
-.thread {
     font-family: Arial,sans-serif,sans;
     font-size: 14px;
     white-space: normal;
 }
 
-.thread-new .comment-form, .create-form {
+.kiwi-thread-new .kiwi-comment-form, .kiwi-create-form {
   display: none;
 }
 
-.thread-new .create-form, .comment-form {
+.kiwi-thread-new .kiwi-create-form, .kiwi-comment-form {
   display: block;;
 }
 
-.thread .comment-form, .thread .create-form {
+.kiwi-thread .kiwi-comment-form, .kiwi-thread .kiwi-create-form {
   padding: 10px;
 }
 
-.thread textarea {
+.kiwi-thread textarea {
   width: 100%;
   font-family: "Times New Roman", Times, serif;  
   font-size: 16px;
   height: 40px;
 }
 
-.thread .comment-form textarea:focus, 
-.thread .comment-form textarea:valid,
-.thread .create-form textarea {
+.kiwi-thread .kiwi-comment-form textarea:focus, 
+.kiwi-thread .kiwi-comment-form textarea:valid,
+.kiwi-thread .kiwi-create-form textarea {
   height: 150px;
 }
 
-.thread .comment-form textarea:invalid ~ input {
+.kiwi-thread .kiwi-comment-form textarea:invalid ~ input {
   display: none;
 }
 
-.thread .comment-form textarea:focus ~ input {
+.kiwi-thread .kiwi-comment-form textarea:focus ~ input {
   display: inline;
 }
 
-.thread .comment, .thread .caption {
+.kiwi-thread .kiwi-comment, .kiwi-thread .kiwi-caption {
   padding: 20px 20px 20px;
   border-bottom: 1px solid #e5e5e5;
 }
 
-.thread .comment-form, .thread .create-form, .thread .comment {
+.kiwi-thread .kiwi-comment-form, .kiwi-thread .kiwi-create-form, .kiwi-thread .kiwi-comment {
   background-color: #f5f5f5;
 }
 
-.thread textarea:invalid + input {
+.kiwi-thread textarea:invalid + input {
   background-color: #4d90fe;
   opacity: 0.5;
 }
 
-input[type="submit"] {
+.kiwi input[type="submit"] {
     color: white;
     font-weight: bold;
     background-color: rgb(53, 122, 232);
@@ -83,17 +76,17 @@ input[type="submit"] {
     font-size: 11px;
 }
 
-input[type="submit"][value="cancel"] {
+.kiwi input[type="submit"][value="cancel"] {
   background-color: #f5f5f5;
   border: 1px solid;
   border-color: rgba(0, 0, 0, 0.0980392);
   color: rgb(51, 51, 51);
 }
 
-input[type="submit"]:hover {
+.kiwi input[type="submit"]:hover {
 }
 
-textarea, input {
+.kiwi textarea, input {
     padding: 10px;
     background-color: white;
     border: 1px solid #CCC;
@@ -101,19 +94,19 @@ textarea, input {
     box-sizing: border-box;
 }
 
-textarea:hover, textarea:focus, input:hover, input:focus {
+.kiwi textarea:hover, textarea:focus, input:hover, input:focus {
     outline: 0;
     border-color: #56B4EF;
     -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05),0 0 8px rgba(82, 168, 236, .6);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05),0 0 8px rgba(82, 168, 236, .6);
 }
 
-.thread .header {
+.kiwi-thread .kiwi-header {
   margin-bottom: 7px;
   color: #777;
 }
 
-.thread .header .date {
+.kiwi-thread .kiwi-header .kiwi-date {
     margin: 0;
     font-size: 11px;
     display: block;

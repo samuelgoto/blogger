@@ -52,7 +52,7 @@ window.onload = function() {
     highlighter = rangy.createHighlighter();
     highlighter.threads = highlighter.threads || {};
     
-    highlighter.addClassApplier(rangy.createCssClassApplier("highlight", {
+    highlighter.addClassApplier(rangy.createCssClassApplier("kiwi-highlight", {
         ignoreWhiteSpace: true,
         tagNames: ["span", "a"],
         elementAttributes: {
@@ -66,7 +66,7 @@ window.onload = function() {
 		var highlight = highlighter.getHighlightForElement(el);
 
 		var thread = document.body.querySelector(
-		    ".thread[data-thread-id = '" + highlight.id + "']");
+		    ".kiwi-thread[data-thread-id = '" + highlight.id + "']");
 
 		// If a thread was already created, skip.
 		if (thread) {
@@ -84,14 +84,14 @@ window.onload = function() {
 				username: "Sam Goto"
 			    }
 			};
-			className += "thread-new";
+			className += "kiwi-thread-new";
 		    }
 
 		    var offsetTop = goog.style.getPageOffsetTop(el);
 		    var html = createThread(id, thread);
 
 		    var container = goog.dom.createElement("div");
-		    container.className = "thread";
+		    container.className = "kiwi-thread";
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
 
@@ -141,7 +141,7 @@ window.onload = function() {
 function onCreateThread(input) {
     var caption = input["caption"].value;
 
-    var p = walkUp(input, "thread");
+    var p = walkUp(input, "kiwi-thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -154,9 +154,9 @@ function onCreateThread(input) {
     };
 
     storeThread(id, thread, function() {
-	goog.dom.classes.remove(p, "thread-new");
+	goog.dom.classes.remove(p, "kiwi-thread-new");
 
-	var el = p.querySelector(".caption .content");
+	var el = p.querySelector(".kiwi-caption .kiwi-content");
 	el.innerHTML = caption;
     });
 
@@ -186,7 +186,7 @@ function walkUp(el, clazz) {
 }
 
 function onCancelThread(input) {
-    var p = walkUp(input, "thread");
+    var p = walkUp(input, "kiwi-thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -205,7 +205,7 @@ function onCancelThread(input) {
 
 function onCreateComment(input) {
     var caption = input["comment"].value;
-    var p = walkUp(input, "thread");
+    var p = walkUp(input, "kiwi-thread");
     var id = p.getAttribute("data-thread-id");
     storage.get("/threads/" + id, function(status, payload) {
 	payload.comments = payload.comments || [];
@@ -219,9 +219,9 @@ function onCreateComment(input) {
 	payload.comments.push(comment);
 	storage.post("/threads/" + id, payload, function(payload) {
 	    // Appends the comment element.
-	    var container = p.querySelector(".comments");
+	    var container = p.querySelector(".kiwi-comments");
 	    var el = goog.dom.createElement("div");
-	    el.className = "comment";
+	    el.className = "kiwi-comment";
 	    el.innerHTML = createComment(comment);
 	    container.appendChild(el);
 
@@ -239,15 +239,15 @@ function onCancelComment(input) {
 
 function createComment(comment) {
     var html = "";
-    html += "<div class='header'>";
-    html += "  <span class='username'>";
+    html += "<div class='kiwi-header'>";
+    html += "  <span class='kiwi-username'>";
     html +=    comment.author.username;
     html += " </span>";
-    html += "  <span class='date'>";
+    html += "  <span class='kiwi-date'>";
     html +=    comment.date;
     html += "  </span>";
     html += "</div>";
-    html += "<div class='content'>";
+    html += "<div class='kiwi-content'>";
     html +=   comment.caption;
     html += "</div>";
     return html;
@@ -255,30 +255,30 @@ function createComment(comment) {
 
 function createThread(id, thread) {
     var html = "";
-    html += "  <div class='caption'>";
-    html += "    <div class='header'>";
-    html += "      <span class='username'>";
+    html += "  <div class='kiwi-caption'>";
+    html += "    <div class='kiwi-header'>";
+    html += "      <span class='kiwi-username'>";
     html +=        thread.author.username;
     html += "      </span>";
-    html += "      <span class='date'>";
+    html += "      <span class='kiwi-date'>";
     html +=        thread.date;
     html += "      </span>";
     html += "    </div>";
-    html += "    <div class='content'>";
+    html += "    <div class='kiwi-content'>";
     if (thread.caption) {
 	html += thread.caption;
     }
     html += "    </div>";
     html += "  </div>";
-    html += "  <div class='comments'>";
+    html += "  <div class='kiwi-comments'>";
     for (var c in thread.comments) {
 	var comment = thread.comments[c];
-	html += "<div class='comment'>";
+	html += "<div class='kiwi-comment'>";
 	html +=   createComment(comment);
 	html += "</div>"
     }
     html += "  </div>"
-    html += "  <div class='create-form'>";
+    html += "  <div class='kiwi-create-form'>";
     html += "    <form name='create-form' onsubmit='return onCreateThread(this);'>";
     html += "      <textarea required name='caption' autofocus placeholder='Add a comment'>";
     html += "</textarea>";
@@ -286,8 +286,8 @@ function createThread(id, thread) {
     html += "      <input type='submit' value='cancel' onclick='return onCancelThread(this);'>";
     html += "    </form>"
     html += "  </div>"
-    html += "  <div class='comment-form'>";
-    html += "    <form name='comment-form' onsubmit='return onCreateComment(this);'>";
+    html += "  <div class='kiwi-comment-form'>";
+    html += "    <form name='kiwi-comment-form' onsubmit='return onCreateComment(this);'>";
     html += "      <textarea required name='comment' placeholder='Reply'>";
     html += "</textarea>";
     html += "      <input type='submit' value='create'>";
@@ -302,7 +302,7 @@ window.onmouseup = function(e) {
     if (window.getSelection().type == "Caret") {
       return;
     }
-    highlighter.highlightSelection("highlight", {
+    highlighter.highlightSelection("kiwi-highlight", {
       exclusive: false
     });
 }
