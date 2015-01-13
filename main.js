@@ -4,6 +4,8 @@
  * It assumes that all of the rangy files have been declared before this file.
  */
 
+goog.provide("kiwi.init");
+
 goog.require("goog.dom");
 goog.require("goog.dom.classes");
 goog.require("goog.style");
@@ -54,7 +56,7 @@ window.onload = function() {
         ignoreWhiteSpace: true,
         tagNames: ["span", "a"],
         elementAttributes: {
-	    foo: "bar",
+	    foo: "bar"
         },
 	onElementCreate: function(el) {
 	    // Unfortunately, this callback is called before the setup
@@ -119,7 +121,7 @@ window.onload = function() {
 		pane.style.marginTop = marginTop + "px";
 
                 return false;
-            },
+            }
         }
     }));
 
