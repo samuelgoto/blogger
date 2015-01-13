@@ -51,7 +51,7 @@ window.onload = function() {
     
     highlighter = rangy.createHighlighter();
     highlighter.threads = highlighter.threads || {};
-    
+
     highlighter.addClassApplier(rangy.createCssClassApplier("kiwi-highlight", {
         ignoreWhiteSpace: true,
         tagNames: ["span", "a"],
@@ -94,32 +94,19 @@ window.onload = function() {
 		    container.className = "kiwi-thread";
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
-
 		    container.className = container.className + " " + className;
 		    document.body.querySelector(".kiwi").appendChild(container);
+
+		    if (s == 404) {
+			scrollThread(el);
+		    }
 		});
 	    }, 0);
         },
         elementProperties: {
             href: "#",
             onclick: function(e) {
-                var highlight = highlighter.getHighlightForElement(this);
-		var thread = document.body.querySelector(
-		    ".thread[data-thread-id = '" + highlight.id + "']");
-
-		var offsetTop = goog.style.getPageOffsetTop(this);
-
-		var threadTop = goog.style.getClientPosition(thread).y;
-
-		var pane = document.body.querySelector(".kiwi");
-
-		var marginTop = Number(pane.style.marginTop.replace(/[^-\d\.]/g, '') || 0);
-		// console.log(marginTop);
-		// console.log(offsetTop);
-		// console.log(threadTop);
-		marginTop = marginTop + offsetTop - threadTop;
-		pane.style.marginTop = marginTop + "px";
-
+		scrollThread(this);
                 return false;
             }
         }
@@ -137,6 +124,27 @@ window.onload = function() {
 	});
     });
 };
+
+function scrollThread(el) {
+    var highlight = highlighter.getHighlightForElement(el);
+
+    var thread = document.body.querySelector(
+	".kiwi-thread[data-thread-id = '" + highlight.id + "']");
+
+    var offsetTop = goog.style.getPageOffsetTop(el);
+
+    // var threadTop = goog.style.getClientPosition(thread).y;
+    var threadTop = goog.style.getPageOffsetTop(thread);
+
+    var pane = document.body.querySelector(".kiwi");
+
+    var marginTop = Number(pane.style.marginTop.replace(/[^-\d\.]/g, '') || 0);
+    console.log(marginTop);
+    console.log(offsetTop);
+    console.log(threadTop);
+    marginTop = marginTop + offsetTop - threadTop;
+    pane.style.marginTop = marginTop + "px";
+}
 
 function onCreateThread(input) {
     var caption = input["caption"].value;
