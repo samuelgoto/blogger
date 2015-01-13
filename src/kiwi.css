@@ -124,6 +124,10 @@
     display: none;
 }
 
+.kiwi-thread-new .kiwi-thread-body {
+    display: block;
+}
+
 .kiwi-thread {
     -webkit-transition: right 0.5s ease;
     -moz-transition: rigth 0.5s ease;  
