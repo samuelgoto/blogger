@@ -4,7 +4,7 @@
  * It assumes that all of the rangy files have been declared before this file.
  */
 
-goog.provide("kiwi.init");
+goog.provide("kiwi");
 
 goog.require("goog.dom");
 goog.require("goog.dom.classes");
