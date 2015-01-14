@@ -100,7 +100,28 @@ window.onload = function() {
 		    container.className = container.className + " " + className;
 		    document.body.querySelector(".kiwi").appendChild(container);
 
-		    scrollThread(el);
+		    // Positions the thread at the right level.
+		    var offsetTop = goog.style.getPageOffsetTop(el);
+		    container.style.top = offsetTop + "px";
+
+		    // Pushes threads one above the other.
+		    var threads = document.body.querySelectorAll(
+			".kiwi-thread[data-thread-offset-top = '" + 
+			    offsetTop + "']")
+		    var zIndex = 100;
+		    for (var t = 0; t < threads.length; t++) {
+			var z = Number(threads[t].getAttribute(
+			    "data-thread-z-index"));
+			if (z >= zIndex) {
+			    zIndex = z + 1;
+			}
+		    }
+		    // TODO(goto): set a max z-index here.
+
+		    container.setAttribute("data-thread-offset-top", offsetTop);
+		    container.setAttribute("data-thread-z-index", zIndex);
+
+		    container.style.zIndex = zIndex;
 		});
 	    }, 0);
         },
@@ -305,11 +326,36 @@ function createThread(id, thread) {
     return html;
 }
 
+function threadBlur(thread) {
+    // Cleaning any focus that may exist.
+    thread.setAttribute("data-kiwi-focus", false);
+
+    var offsetTop = thread.getAttribute("data-thread-offset-top");
+    var threads = document.querySelectorAll(
+	".kiwi-thread[data-thread-offset-top='" + offsetTop + "']");
+
+    // Re-organizes the threads.
+    for (var t = 0; t < threads.length; t++) {
+	if (thread == threads[t]) {
+	    // Pushes the current thread to the bottom.
+	    thread.setAttribute("data-thread-z-index", 100);
+	    thread.style.zIndex = 100;
+	} else {
+	    // Pushes all the other threads up.
+	    var zIndex = Number(threads[t].getAttribute("data-thread-z-index"));
+	    zIndex++;
+	    threads[t].setAttribute("data-thread-z-index", zIndex)
+	    threads[t].style.zIndex = zIndex;
+	}
+    }
+}
+
 window.onmouseup = function(e) {
     var thread = document.querySelector(".kiwi-thread[data-kiwi-focus=true]");
     if (thread) {
 	// Cleaning any focus that may exist.
-	thread.setAttribute("data-kiwi-focus", false);
+	// thread.setAttribute("data-kiwi-focus", false);
+	threadBlur(thread);
     }
 
     if (window.getSelection().type == "Caret") {
