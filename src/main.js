@@ -361,6 +361,13 @@ window.onmouseup = function(e) {
     if (window.getSelection().type == "Caret") {
       return;
     }
+
+    // If a selection is made a thread, ignore it.
+    var p = walkUp(e.target, "kiwi-thread");
+    if (p) {
+	return;
+    }
+
     highlighter.highlightSelection("kiwi-highlight", {
       exclusive: false
     });
