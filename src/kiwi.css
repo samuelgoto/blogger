@@ -129,16 +129,17 @@
 }
 
 .kiwi-thread {
-    -webkit-transition: right 0.5s ease;
-    -moz-transition: rigth 0.5s ease;  
-    -o-transition: right 0.5s ease;  
-    -ms-transition: right 0.5s ease;  
-    transition: right 0.5s ease;
+    -webkit-transition: right 0.5s ease, margin-top 0.5s ease;
+    -moz-transition: rigth 0.5s ease, margin-top 0.5s ease;  
+    -o-transition: right 0.5s ease, margin-top 0.5s ease;  
+    -ms-transition: right 0.5s ease, margin-top 0.5s ease;  
+    transition: right 0.5s ease, margin-top 0.5s ease;
 }
 
 .kiwi-thread[data-kiwi-focus=true] {
     z-index: 200 !important;
     right: 70px;
+    margin-top: 40px;
 }
 
 .kiwi-thread[data-kiwi-focus=true] .kiwi-thread-body {
