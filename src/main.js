@@ -3,7 +3,6 @@
  *
  * It assumes that all of the rangy files have been declared before this file.
  */
-
 goog.provide("rfc");
 
 goog.require("goog.dom");
@@ -15,9 +14,9 @@ goog.require("rfc.Storage");
 var storage = new rfc.Storage();
 var highlighter;
 
-window.onload = function() {
+function init() {
     rangy.init();
-    
+
     highlighter = rangy.createHighlighter();
     highlighter.threads = highlighter.threads || {};
 
@@ -341,3 +340,5 @@ window.onmouseup = function(e) {
       exclusive: false
     });
 }
+
+window.addEventListener("load", init, false);
