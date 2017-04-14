@@ -4,15 +4,15 @@
  * It assumes that all of the rangy files have been declared before this file.
  */
 
-goog.provide("blogger");
+goog.provide("rfc");
 
 goog.require("goog.dom");
 goog.require("goog.dom.classes");
 goog.require("goog.style");
 
-goog.require("blogger.Storage");
+goog.require("rfc.Storage");
 
-var storage = new blogger.Storage();
+var storage = new rfc.Storage();
 var highlighter;
 
 window.onload = function() {
