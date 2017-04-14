@@ -1,7 +1,9 @@
-# blogger
+# RFC - Request For Comments
+#
+# A google-docs-like commenting widget for web pages/blogs.
 
 1. git clone
-  * git clone https://github.com/samuelgoto/blogger.git
+  * git clone https://github.com/samuelgoto/rfc.git
 2. add dependencies
   * git submodule init
   * git submodule update
