@@ -232,66 +232,77 @@ function onCancelComment(input) {
 }
 
 function createComment(comment) {
-    var html = "";
-    html += "<div class='rfc-header'>";
-    html += "  <span class='rfc-username'>";
-    html +=    comment.author.username;
-    html += " </span>";
-    html += "  <span class='rfc-date'>";
-    html +=    comment.date;
-    html += "  </span>";
-    html += "</div>";
-    html += "<div class='rfc-content'>";
-    html +=   comment.caption;
-    html += "</div>";
-    return html;
+  var html = `
+      <div class='rfc-header'>
+        <span class='rfc-username'>
+          ${comment.author.username}
+        </span>
+        <span class='rfc-date'>
+          ${comment.date}
+        </span>
+      </div>
+      <div class='rfc-content'>
+        ${comment.caption}
+      </div>
+    `;
+  return html;
 }
 
 function createThread(id, thread) {
-    var html = "";
-    html += "  <div class='rfc-caption'>";
-    html += "    <div class='rfc-header'>";
-    html += "      <span class='rfc-username'>";
-    html +=        thread.author.username;
-    html += "      </span>";
-    html += "      <span class='rfc-date'>";
-    html +=        thread.date;
-    html += "      </span>";
-    html += "    </div>";
-    html += "    <div class='rfc-content'>";
-    if (thread.caption) {
-	html += thread.caption;
-    }
-    html += "    </div>";
-    html += "  </div>";
-    html += "  <div class='rfc-thread-body'>";
-    html += "    <div class='rfc-comments'>";
-    for (var c in thread.comments) {
-	var comment = thread.comments[c];
-	html += "  <div class='rfc-comment'>";
-	html +=     createComment(comment);
-	html += "  </div>"
-    }
-    html += "    </div>"
-    html += "    <div class='rfc-create-form'>";
-    html += "      <form name='create-form' onsubmit='return onCreateThread(this);'>";
-    html += "        <textarea required name='caption' autofocus placeholder='Add a comment'>";
-    html += "</textarea>";
-    html += "        <input type='submit' value='create'>";
-    html += "        <input type='submit' value='cancel' onclick='return onCancelThread(this);'>";
-    html += "      </form>"
-    html += "    </div>"
-    html += "    <div class='rfc-comment-form'>";
-    html += "      <form name='rfc-comment-form' onsubmit='return onCreateComment(this);'>";
-    html += "        <textarea required name='comment' placeholder='Reply'>";
-    html += "</textarea>";
-    html += "        <input type='submit' value='create'>";
-    html += "        <input type='submit' value='cancel' onclick='return onCancelComment(this);'>";
-    html += "      </form>"
-    html += "    </div>"
-    html += "  </div>"
+  var html = `
+      <div class='rfc-caption'>
+        <div class='rfc-header'>
+          <span class='rfc-username'>
+            ${thread.author.username}
+          </span>
+          <span class='rfc-date'>
+            ${thread.date}
+          </span>
+          </div>
+          <div class='rfc-content'>
+    `;
 
-    return html;
+  if (thread.caption) {
+    html += thread.caption;
+  }
+
+  html += "    </div>";
+  html += "  </div>";
+  html += "  <div class='rfc-thread-body'>";
+  html += "    <div class='rfc-comments'>";
+
+  for (var c in thread.comments) {
+    var comment = thread.comments[c];
+    html += "  <div class='rfc-comment'>";
+    html +=     createComment(comment);
+    html += "  </div>"
+  }
+
+  html += "    </div>"
+
+  html += `
+    <div class='rfc-create-form'>
+      <form name='create-form' onsubmit='return onCreateThread(this);'>
+        <textarea required name='caption' autofocus
+        placeholder='Add a comment'></textarea>
+        <input type='submit' value='create'>
+        <input type='submit' value='cancel'
+          onclick='return onCancelThread(this);'>
+      </form>
+    </div>
+    <div class='rfc-comment-form'>
+    <form name='rfc-comment-form' onsubmit='return onCreateComment(this);'>
+      <textarea required name='comment' placeholder='Reply'></textarea>
+      <input type='submit' value='create'>
+      <input type='submit' value='cancel'
+        onclick='return onCancelComment(this);'>
+    </form>
+  </div>
+  `;
+
+  html += "</div>";
+
+  return html;
 }
 
 function threadBlur(thread) {
@@ -340,5 +351,3 @@ window.onmouseup = function(e) {
       exclusive: false
     });
 }
-
-window.addEventListener("load", init, false);

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
   <head>
     <title>RFC Demo</title>
-    <link rel="stylesheet" type="text/css" href="../src/rfc.css">
     <script src="../third_party/closure-library/closure/goog/base.js"></script>
     <script src="../third_party/rangy/lib/rangy-core.js"></script>
     <script src="../third_party/rangy/lib/rangy-classapplier.js"></script>
@@ -11,9 +10,13 @@
     <script src="../third_party/rangy/lib/rangy-textrange.js"></script>
     <script src="../src/globals.js"></script>
     <script src="../src/deps.js"></script>
+    <script src="../src/storage.js"></script>
     <script>
-      goog.require("rfc");
+      goog.require("goog.dom");
+      goog.require("goog.dom.classes");
+      goog.require("goog.style");
     </script>
+    <link rel="import" href="../src/rfc.html">
   </head>
   <body>
     <br>foo  bar foo bar 2
