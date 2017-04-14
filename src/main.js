@@ -1,5 +1,5 @@
 /**
- * This is the main kiwi script.
+ * This is the main rfc script.
  *
  * It assumes that all of the rangy files have been declared before this file.
  */
@@ -21,7 +21,7 @@ window.onload = function() {
     highlighter = rangy.createHighlighter();
     highlighter.threads = highlighter.threads || {};
 
-    highlighter.addClassApplier(rangy.createCssClassApplier("kiwi-highlight", {
+    highlighter.addClassApplier(rangy.createCssClassApplier("rfc-highlight", {
         ignoreWhiteSpace: true,
         tagNames: ["span", "a"],
         elementAttributes: {
@@ -35,7 +35,7 @@ window.onload = function() {
 		var highlight = highlighter.getHighlightForElement(el);
 
 		var thread = document.body.querySelector(
-		    ".kiwi-thread[data-thread-id = '" + highlight.id + "']");
+		    ".rfc-thread[data-thread-id = '" + highlight.id + "']");
 
 		// If a thread was already created, skip.
 		if (thread) {
@@ -53,7 +53,7 @@ window.onload = function() {
 				username: "Sam Goto"
 			    }
 			};
-			className += "kiwi-thread-new";
+			className += "rfc-thread-new";
 		    }
 
 		    var offsetTop = goog.style.getPageOffsetTop(el);
@@ -61,13 +61,13 @@ window.onload = function() {
 
 		    var container = goog.dom.createElement("div");
 		    container.onclick = function(e) {
-			this.setAttribute("data-kiwi-focus", "true");
+			this.setAttribute("data-rfc-focus", "true");
 		    };
-		    container.className = "kiwi-thread";
+		    container.className = "rfc-thread";
 		    container.innerHTML = html;
 		    container.setAttribute("data-thread-id", id);
 		    container.className = container.className + " " + className;
-		    document.body.querySelector(".kiwi").appendChild(container);
+		    document.body.querySelector(".rfc").appendChild(container);
 
 		    // Positions the thread at the right level.
 		    var offsetTop = goog.style.getPageOffsetTop(el);
@@ -75,7 +75,7 @@ window.onload = function() {
 
 		    // Pushes threads one above the other.
 		    var threads = document.body.querySelectorAll(
-			".kiwi-thread[data-thread-offset-top = '" + 
+			".rfc-thread[data-thread-offset-top = '" + 
 			    offsetTop + "']")
 		    var zIndex = 100;
 		    for (var t = 0; t < threads.length; t++) {
@@ -100,9 +100,9 @@ window.onload = function() {
 		var highlight = highlighter.getHighlightForElement(this);
 
 		var thread = document.body.querySelector(
-		    ".kiwi-thread[data-thread-id = '" + highlight.id + "']");
+		    ".rfc-thread[data-thread-id = '" + highlight.id + "']");
 
-		thread.setAttribute("data-kiwi-focus", "true");
+		thread.setAttribute("data-rfc-focus", "true");
 
                 return false;
             }
@@ -110,7 +110,7 @@ window.onload = function() {
     }));
 
     var container = goog.dom.createElement("div");
-    container.className = "kiwi";
+    container.className = "rfc";
     document.body.appendChild(container);
 
     storage.load(function(serialized) {
@@ -126,7 +126,7 @@ function scrollThread(el) {
     var highlight = highlighter.getHighlightForElement(el);
 
     var thread = document.body.querySelector(
-	".kiwi-thread[data-thread-id = '" + highlight.id + "']");
+	".rfc-thread[data-thread-id = '" + highlight.id + "']");
 
     var offsetTop = goog.style.getPageOffsetTop(el);
 
@@ -136,7 +136,7 @@ function scrollThread(el) {
 function onCreateThread(input) {
     var caption = input["caption"].value;
 
-    var p = walkUp(input, "kiwi-thread");
+    var p = walkUp(input, "rfc-thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -149,9 +149,9 @@ function onCreateThread(input) {
     };
 
     storeThread(id, thread, function() {
-	goog.dom.classes.remove(p, "kiwi-thread-new");
+	goog.dom.classes.remove(p, "rfc-thread-new");
 
-	var el = p.querySelector(".kiwi-caption .kiwi-content");
+	var el = p.querySelector(".rfc-caption .rfc-content");
 	el.innerHTML = caption;
     });
 
@@ -181,7 +181,7 @@ function walkUp(el, clazz) {
 }
 
 function onCancelThread(input) {
-    var p = walkUp(input, "kiwi-thread");
+    var p = walkUp(input, "rfc-thread");
 
     var id = p.getAttribute("data-thread-id");
 
@@ -200,7 +200,7 @@ function onCancelThread(input) {
 
 function onCreateComment(input) {
     var caption = input["comment"].value;
-    var p = walkUp(input, "kiwi-thread");
+    var p = walkUp(input, "rfc-thread");
     var id = p.getAttribute("data-thread-id");
     storage.get("/threads/" + id, function(status, payload) {
 	payload.comments = payload.comments || [];
@@ -214,9 +214,9 @@ function onCreateComment(input) {
 	payload.comments.push(comment);
 	storage.post("/threads/" + id, payload, function(payload) {
 	    // Appends the comment element.
-	    var container = p.querySelector(".kiwi-comments");
+	    var container = p.querySelector(".rfc-comments");
 	    var el = goog.dom.createElement("div");
-	    el.className = "kiwi-comment";
+	    el.className = "rfc-comment";
 	    el.innerHTML = createComment(comment);
 	    container.appendChild(el);
 
@@ -234,15 +234,15 @@ function onCancelComment(input) {
 
 function createComment(comment) {
     var html = "";
-    html += "<div class='kiwi-header'>";
-    html += "  <span class='kiwi-username'>";
+    html += "<div class='rfc-header'>";
+    html += "  <span class='rfc-username'>";
     html +=    comment.author.username;
     html += " </span>";
-    html += "  <span class='kiwi-date'>";
+    html += "  <span class='rfc-date'>";
     html +=    comment.date;
     html += "  </span>";
     html += "</div>";
-    html += "<div class='kiwi-content'>";
+    html += "<div class='rfc-content'>";
     html +=   comment.caption;
     html += "</div>";
     return html;
@@ -250,31 +250,31 @@ function createComment(comment) {
 
 function createThread(id, thread) {
     var html = "";
-    html += "  <div class='kiwi-caption'>";
-    html += "    <div class='kiwi-header'>";
-    html += "      <span class='kiwi-username'>";
+    html += "  <div class='rfc-caption'>";
+    html += "    <div class='rfc-header'>";
+    html += "      <span class='rfc-username'>";
     html +=        thread.author.username;
     html += "      </span>";
-    html += "      <span class='kiwi-date'>";
+    html += "      <span class='rfc-date'>";
     html +=        thread.date;
     html += "      </span>";
     html += "    </div>";
-    html += "    <div class='kiwi-content'>";
+    html += "    <div class='rfc-content'>";
     if (thread.caption) {
 	html += thread.caption;
     }
     html += "    </div>";
     html += "  </div>";
-    html += "  <div class='kiwi-thread-body'>";
-    html += "    <div class='kiwi-comments'>";
+    html += "  <div class='rfc-thread-body'>";
+    html += "    <div class='rfc-comments'>";
     for (var c in thread.comments) {
 	var comment = thread.comments[c];
-	html += "  <div class='kiwi-comment'>";
+	html += "  <div class='rfc-comment'>";
 	html +=     createComment(comment);
 	html += "  </div>"
     }
     html += "    </div>"
-    html += "    <div class='kiwi-create-form'>";
+    html += "    <div class='rfc-create-form'>";
     html += "      <form name='create-form' onsubmit='return onCreateThread(this);'>";
     html += "        <textarea required name='caption' autofocus placeholder='Add a comment'>";
     html += "</textarea>";
@@ -282,8 +282,8 @@ function createThread(id, thread) {
     html += "        <input type='submit' value='cancel' onclick='return onCancelThread(this);'>";
     html += "      </form>"
     html += "    </div>"
-    html += "    <div class='kiwi-comment-form'>";
-    html += "      <form name='kiwi-comment-form' onsubmit='return onCreateComment(this);'>";
+    html += "    <div class='rfc-comment-form'>";
+    html += "      <form name='rfc-comment-form' onsubmit='return onCreateComment(this);'>";
     html += "        <textarea required name='comment' placeholder='Reply'>";
     html += "</textarea>";
     html += "        <input type='submit' value='create'>";
@@ -297,11 +297,11 @@ function createThread(id, thread) {
 
 function threadBlur(thread) {
     // Cleaning any focus that may exist.
-    thread.setAttribute("data-kiwi-focus", false);
+    thread.setAttribute("data-rfc-focus", false);
 
     var offsetTop = thread.getAttribute("data-thread-offset-top");
     var threads = document.querySelectorAll(
-	".kiwi-thread[data-thread-offset-top='" + offsetTop + "']");
+	".rfc-thread[data-thread-offset-top='" + offsetTop + "']");
 
     // Re-organizes the threads.
     for (var t = 0; t < threads.length; t++) {
@@ -320,10 +320,10 @@ function threadBlur(thread) {
 }
 
 window.onmouseup = function(e) {
-    var thread = document.querySelector(".kiwi-thread[data-kiwi-focus=true]");
+    var thread = document.querySelector(".rfc-thread[data-rfc-focus=true]");
     if (thread) {
 	// Cleaning any focus that may exist.
-	// thread.setAttribute("data-kiwi-focus", false);
+	// thread.setAttribute("data-rfc-focus", false);
 	threadBlur(thread);
     }
 
@@ -332,12 +332,12 @@ window.onmouseup = function(e) {
     }
 
     // If a selection is made a thread, ignore it.
-    var p = walkUp(e.target, "kiwi-thread");
+    var p = walkUp(e.target, "rfc-thread");
     if (p) {
 	return;
     }
 
-    highlighter.highlightSelection("kiwi-highlight", {
+    highlighter.highlightSelection("rfc-highlight", {
       exclusive: false
     });
 }
