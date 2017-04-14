@@ -14,3 +14,4 @@
   -f --js=third_party/rangy/lib/rangy-serializer.js                  \
   -f --js=third_party/rangy/lib/rangy-highlighter.js                 \
   -f --js=third_party/rangy/lib/rangy-textrange.js                   \
+
