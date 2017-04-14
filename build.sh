@@ -15,3 +15,5 @@
   -f --js=third_party/rangy/lib/rangy-highlighter.js                 \
   -f --js=third_party/rangy/lib/rangy-textrange.js                   \
 
+cp src/rfc.html bin/rfc.html
+cp src/rfc.css bin/rfc.css
