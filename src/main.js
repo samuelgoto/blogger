@@ -74,7 +74,7 @@ function init() {
 
 		    // Pushes threads one above the other.
 		    var threads = document.body.querySelectorAll(
-			".rfc-thread[data-thread-offset-top = '" + 
+			".rfc-thread[data-thread-offset-top = '" +
 			    offsetTop + "']")
 		    var zIndex = 100;
 		    for (var t = 0; t < threads.length; t++) {
@@ -169,7 +169,7 @@ function storeThread(id, thread, callback) {
 
 function walkUp(el, clazz) {
     var p = el.parentNode;
-    
+
     while (p !== null) {
 	if (goog.dom.classes.has(p, clazz)) {
 	    // break;
@@ -290,7 +290,7 @@ function createThread(id, thread) {
     html += "      </form>"
     html += "    </div>"
     html += "  </div>"
-    
+
     return html;
 }
 
