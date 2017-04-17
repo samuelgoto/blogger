@@ -71,11 +71,6 @@
   background-color: #f5f5f5;
 }
 
-.rfc-thread textarea:invalid + input {
-  background-color: #4d90fe;
-  opacity: 0.5;
-}
-
 .rfc input[type="submit"] {
     color: white;
     font-weight: bold;
@@ -144,4 +139,24 @@
 
 .rfc-thread[data-rfc-focus=true] .rfc-thread-body {
     display: block;
+}
+
+.notify {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.contact .email {
+  background-color: white;
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.contact {
+  display: none;
+}
+
+.notify:checked ~ .contact {
+  display: block;
 }

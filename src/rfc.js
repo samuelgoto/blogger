@@ -47,10 +47,7 @@ function init() {
 		    if (s == 404) {
 			// This is a new thread.
 			thread = {
-			    date: (new Date()).toString(),
-			    author: {
-				username: "Sam Goto"
-			    }
+			    date: (new Date()).toString()
 			};
 			className += "rfc-thread-new";
 		    }
@@ -253,7 +250,6 @@ function createThread(id, thread) {
       <div class='rfc-caption'>
         <div class='rfc-header'>
           <span class='rfc-username'>
-            ${thread.author.username}
           </span>
           <span class='rfc-date'>
             ${thread.date}
@@ -285,6 +281,16 @@ function createThread(id, thread) {
       <form name='create-form' onsubmit='return onCreateThread(this);'>
         <textarea required name='caption' autofocus
         placeholder='Add a comment'></textarea>
+        <div>
+          <input class="notify" type="checkbox"> Notify me on responses.
+          <div class="contact">
+            <small>
+            When comments are made in this thread we'll send you an email.
+            </small>
+            <input type="email" name="username" class="email"
+            placeholder="Your email address">
+          </div>
+        </div>
         <input type='submit' value='create'>
         <input type='submit' value='cancel'
           onclick='return onCancelThread(this);'>
